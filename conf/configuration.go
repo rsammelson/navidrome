@@ -70,6 +70,9 @@ type configOptions struct {
 	Spotify      spotifyOptions
 	ListenBrainz listenBrainzOptions
 
+	//test downsampling
+	DefaultDownsamplingFormat string
+
 	// DevFlags. These are used to enable/disable debugging and incomplete features
 	DevLogSourceLine           bool
 	DevLogLevels               map[string]string
@@ -274,6 +277,9 @@ func init() {
 	viper.SetDefault("spotify.secret", "")
 	viper.SetDefault("listenbrainz.enabled", true)
 	viper.SetDefault("listenbrainz.baseurl", "https://api.listenbrainz.org/1/")
+
+	//Downsampling
+	viper.SetDefault("defaultdownsamplingformat", "mp3")
 
 	// DevFlags. These are used to enable/disable debugging and incomplete features
 	viper.SetDefault("devlogsourceline", false)
