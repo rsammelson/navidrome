@@ -110,13 +110,13 @@ type fakeArtwork struct {
 	recvSize int
 }
 
-func (c *fakeArtwork) Get(ctx context.Context, id string, size int) (io.ReadCloser, error) {
+func (c *fakeArtwork) Get(ctx context.Context, id string, size int) (io.ReadCloser, string, error) {
 	if c.err != nil {
-		return nil, c.err
+		return nil, "", c.err
 	}
 	c.recvId = id
 	c.recvSize = size
-	return io.NopCloser(bytes.NewReader([]byte(c.data))), nil
+	return io.NopCloser(bytes.NewReader([]byte(c.data))), "", nil
 }
 
 var _ = Describe("isSynced", func() {

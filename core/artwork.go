@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"image"
@@ -15,6 +16,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"crypto/sha256"
 
 	"github.com/dhowden/tag"
 	"github.com/disintegration/imaging"
@@ -29,7 +32,7 @@ import (
 )
 
 type Artwork interface {
-	Get(ctx context.Context, id string, size int) (io.ReadCloser, error)
+	Get(ctx context.Context, id string, size int) (io.ReadCloser, string, error)
 }
 
 type ArtworkCache cache.FileCache
@@ -55,10 +58,10 @@ func (ci *imageInfo) Key() string {
 	return fmt.Sprintf("%s.%d.%s.%d", ci.path, ci.size, ci.lastUpdate.Format(time.RFC3339Nano), conf.Server.CoverJpegQuality)
 }
 
-func (a *artwork) Get(ctx context.Context, id string, size int) (io.ReadCloser, error) {
+func (a *artwork) Get(ctx context.Context, id string, size int) (io.ReadCloser, string, error) {
 	path, lastUpdate, err := a.getImagePath(ctx, id)
 	if err != nil && err != model.ErrNotFound {
-		return nil, err
+		return nil, "", err
 	}
 
 	if !conf.Server.DevFastAccessCoverArt {
@@ -78,9 +81,13 @@ func (a *artwork) Get(ctx context.Context, id string, size int) (io.ReadCloser, 
 	r, err := a.cache.Get(ctx, info)
 	if err != nil {
 		log.Error(ctx, "Error accessing image cache", "path", path, "size", size, err)
-		return nil, err
+		return nil, "", err
 	}
-	return r, err
+
+	shaHash := sha256.Sum256([]byte(id + lastUpdate.String()))
+	string := hex.EncodeToString(shaHash[:])
+
+	return r, string, err
 }
 
 func (a *artwork) getImagePath(ctx context.Context, id string) (path string, lastUpdated time.Time, err error) {
@@ -151,7 +158,7 @@ func (a *artwork) getArtwork(ctx context.Context, id string, path string, size i
 	} else {
 		// If requested a resized image, get the original (possibly from cache) and resize it
 		var r io.ReadCloser
-		r, err = a.Get(ctx, id, 0)
+		r, _, err = a.Get(ctx, id, 0)
 		if err != nil {
 			return
 		}

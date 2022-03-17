@@ -65,7 +65,17 @@ func (c *MediaRetrievalController) GetCoverArt(w http.ResponseWriter, r *http.Re
 
 	w.Header().Set("cache-control", "public, max-age=315360000")
 
-	imgReader, err := c.artwork.Get(r.Context(), id, size)
+	imgReader, hash, err := c.artwork.Get(r.Context(), id, size)
+
+	if match := r.Header.Get("If-None-Match"); match != "" {
+		if match == "\""+hash+"\"" {
+			w.WriteHeader(http.StatusNotModified)
+			return nil, nil
+		}
+	}
+
+	w.Header().Set("Etag", "\""+hash+"\"")
+
 	switch {
 	case err == model.ErrNotFound:
 		log.Error(r, "Couldn't find coverArt", "id", id, err)

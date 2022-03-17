@@ -44,7 +44,7 @@ var _ = Describe("Artwork", func() {
 		})
 
 		It("retrieves the external artwork art for an album", func() {
-			r, err := artwork.Get(ctx, "al-444", 0)
+			r, _, err := artwork.Get(ctx, "al-444", 0)
 			Expect(err).To(BeNil())
 
 			_, format, err := image.Decode(r)
@@ -54,7 +54,7 @@ var _ = Describe("Artwork", func() {
 		})
 
 		It("retrieves the embedded artwork art for an album", func() {
-			r, err := artwork.Get(ctx, "al-222", 0)
+			r, _, err := artwork.Get(ctx, "al-222", 0)
 			Expect(err).To(BeNil())
 
 			_, format, err := image.Decode(r)
@@ -64,7 +64,7 @@ var _ = Describe("Artwork", func() {
 		})
 
 		It("returns the default artwork if album does not have artwork", func() {
-			r, err := artwork.Get(ctx, "al-333", 0)
+			r, _, err := artwork.Get(ctx, "al-333", 0)
 			Expect(err).To(BeNil())
 
 			_, format, err := image.Decode(r)
@@ -74,7 +74,7 @@ var _ = Describe("Artwork", func() {
 		})
 
 		It("returns the default artwork if album is not found", func() {
-			r, err := artwork.Get(ctx, "al-0101", 0)
+			r, _, err := artwork.Get(ctx, "al-0101", 0)
 			Expect(err).To(BeNil())
 
 			_, format, err := image.Decode(r)
@@ -84,7 +84,7 @@ var _ = Describe("Artwork", func() {
 		})
 
 		It("retrieves the original artwork art from a media_file", func() {
-			r, err := artwork.Get(ctx, "123", 0)
+			r, _, err := artwork.Get(ctx, "123", 0)
 			Expect(err).To(BeNil())
 
 			img, format, err := image.Decode(r)
@@ -96,7 +96,7 @@ var _ = Describe("Artwork", func() {
 		})
 
 		It("retrieves the album artwork art if media_file does not have one", func() {
-			r, err := artwork.Get(ctx, "456", 0)
+			r, _, err := artwork.Get(ctx, "456", 0)
 			Expect(err).To(BeNil())
 
 			_, format, err := image.Decode(r)
@@ -106,7 +106,7 @@ var _ = Describe("Artwork", func() {
 		})
 
 		It("retrieves the album artwork by album id", func() {
-			r, err := artwork.Get(ctx, "222", 0)
+			r, _, err := artwork.Get(ctx, "222", 0)
 			Expect(err).To(BeNil())
 
 			_, format, err := image.Decode(r)
@@ -116,7 +116,7 @@ var _ = Describe("Artwork", func() {
 		})
 
 		It("resized artwork art as requested", func() {
-			r, err := artwork.Get(ctx, "123", 200)
+			r, _, err := artwork.Get(ctx, "123", 200)
 			Expect(err).To(BeNil())
 
 			img, format, err := image.Decode(r)
@@ -130,13 +130,13 @@ var _ = Describe("Artwork", func() {
 		Context("Errors", func() {
 			It("returns err if gets error from album table", func() {
 				ds.Album(ctx).(*tests.MockAlbumRepo).SetError(true)
-				_, err := artwork.Get(ctx, "al-222", 0)
+				_, _, err := artwork.Get(ctx, "al-222", 0)
 				Expect(err).To(MatchError("Error!"))
 			})
 
 			It("returns err if gets error from media_file table", func() {
 				ds.MediaFile(ctx).(*tests.MockMediaFileRepo).SetError(true)
-				_, err := artwork.Get(ctx, "123", 0)
+				_, _, err := artwork.Get(ctx, "123", 0)
 				Expect(err).To(MatchError("Error!"))
 			})
 		})

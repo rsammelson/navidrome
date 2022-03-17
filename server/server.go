@@ -62,7 +62,7 @@ func (s *Server) initRoutes() {
 		r.Use(middleware.RealIP)
 	}
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.Compress(5, "application/xml", "application/json", "application/javascript"))
+	r.Use(middleware.Compress(5, "application/xml", "application/json", "application/javascript", "text/css", "text/javascript"))
 	r.Use(middleware.Heartbeat("/ping"))
 	r.Use(clientUniqueIdAdder)
 	r.Use(loggerInjector)
