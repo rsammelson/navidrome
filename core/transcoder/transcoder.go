@@ -24,7 +24,7 @@ type externalTranscoder struct{}
 func (e *externalTranscoder) Start(ctx context.Context, command, path string, maxBitRate int) (f io.ReadCloser, err error) {
 	args := createTranscodeCommand(command, path, maxBitRate)
 
-	log.Debug(ctx, "Executing transcoding command", "cmd", args)
+	log.Trace(ctx, "Executing transcoding command", "cmd", args)
 	cmd := exec.Command(args[0], args[1:]...) // #nosec
 	cmd.Stderr = os.Stderr
 	if f, err = cmd.StdoutPipe(); err != nil {
