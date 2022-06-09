@@ -10,7 +10,9 @@ require (
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
 	github.com/cespare/reflex v0.3.1
 	github.com/deluan/rest v0.0.0-20211101235434-380523c4bb47
-	github.com/dhowden/tag v0.0.0-20220618230019-adf36e896086
+	github.com/denis-tingaikin/go-header v0.4.3 // indirect
+	github.com/denisenkom/go-mssqldb v0.10.0 // indirect
+	github.com/dhowden/tag v0.0.0-20200412032933-5d76b8eaae27
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/atime v1.1.0
 	github.com/djherbis/fscache v0.10.2-0.20220222230828-2909c950912d

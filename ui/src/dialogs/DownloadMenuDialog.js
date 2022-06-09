@@ -24,6 +24,7 @@ const DownloadTranscodings = (props) => {
   return (
     <>
       <TextField
+        fullWidth
         id="downloadFormat"
         select
         label={translate('resources.transcoding.fields.targetFormat')}
@@ -119,6 +120,7 @@ const DownloadMenuDialog = () => {
               {!originalFormat && (
                 <>
                   <ReferenceManyField
+                    fullWidth
                     source=""
                     target="name"
                     reference="transcoding"
@@ -130,6 +132,7 @@ const DownloadMenuDialog = () => {
                     />
                   </ReferenceManyField>
                   <TextField
+                    fullWidth
                     id="downloadRate"
                     select
                     label={translate('resources.player.fields.maxBitRate')}
