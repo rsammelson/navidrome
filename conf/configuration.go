@@ -34,7 +34,7 @@ type configOptions struct {
 	ImageCacheSize          string
 	AutoImportPlaylists     bool
 	PlaylistsPath           string
-	AutoTranscodeDownlaod   bool
+	AutoTranscodeDownload   bool
 
 	EnableDuplicateSearch  bool
 	SearchFullString       bool
