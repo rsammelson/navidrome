@@ -120,7 +120,7 @@ func (api *Router) Download(w http.ResponseWriter, r *http.Request) (*responses.
 
 	switch v := entity.(type) {
 	case *model.MediaFile:
-		stream, err := c.streamer.NewStream(ctx, id, format, maxBitRate)
+		stream, err := api.streamer.NewStream(ctx, id, format, maxBitRate)
 
 		if err != nil {
 			return nil, err
@@ -156,13 +156,13 @@ func (api *Router) Download(w http.ResponseWriter, r *http.Request) (*responses.
 		return nil, nil
 	case *model.Album:
 		setHeaders(v.Name)
-		err = c.archiver.ZipAlbum(ctx, id, format, maxBitRate, w)
+		err = api.archiver.ZipAlbum(ctx, id, format, maxBitRate, w)
 	case *model.Artist:
 		setHeaders(v.Name)
-		err = c.archiver.ZipArtist(ctx, id, format, maxBitRate, w)
+		err = api.archiver.ZipArtist(ctx, id, format, maxBitRate, w)
 	case *model.Playlist:
 		setHeaders(v.Name)
-		err = c.archiver.ZipPlaylist(ctx, id, format, maxBitRate, w)
+		err = api.archiver.ZipPlaylist(ctx, id, format, maxBitRate, w)
 	default:
 		err = model.ErrNotFound
 	}

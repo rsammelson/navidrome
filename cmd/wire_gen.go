@@ -7,6 +7,8 @@
 package cmd
 
 import (
+	"sync"
+
 	"github.com/google/wire"
 	"github.com/navidrome/navidrome/core"
 	"github.com/navidrome/navidrome/core/agents"
@@ -21,7 +23,6 @@ import (
 	"github.com/navidrome/navidrome/server/events"
 	"github.com/navidrome/navidrome/server/nativeapi"
 	"github.com/navidrome/navidrome/server/subsonic"
-	"sync"
 )
 
 // Injectors from wire_injectors.go:

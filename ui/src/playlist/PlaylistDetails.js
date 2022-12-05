@@ -9,6 +9,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { useTranslate } from 'react-admin'
 import { DurationField, SizeField } from '../common'
+import Linkify from '../common/Linkify'
 import config from '../config'
 
 const useStyles = makeStyles(

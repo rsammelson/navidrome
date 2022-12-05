@@ -299,6 +299,91 @@ var _ = Describe("serveIndex", func() {
 		config := extractAppConfig(w.Body.String())
 		Expect(config).To(HaveKeyWithValue("enableReplayGain", true))
 	})
+
+	Describe("loginBackgroundURL", func() {
+		Context("empty BaseURL", func() {
+			BeforeEach(func() {
+				conf.Server.BaseURL = "/"
+			})
+			When("it is the default URL", func() {
+				It("points to the default URL", func() {
+					conf.Server.UILoginBackgroundURL = consts.DefaultUILoginBackgroundURL
+					r := httptest.NewRequest("GET", "/index.html", nil)
+					w := httptest.NewRecorder()
+
+					serveIndex(ds, fs)(w, r)
+
+					config := extractAppConfig(w.Body.String())
+					Expect(config).To(HaveKeyWithValue("loginBackgroundURL", consts.DefaultUILoginBackgroundURL))
+				})
+			})
+			When("it is the default offline URL", func() {
+				It("points to the offline URL", func() {
+					conf.Server.UILoginBackgroundURL = consts.DefaultUILoginBackgroundURLOffline
+					r := httptest.NewRequest("GET", "/index.html", nil)
+					w := httptest.NewRecorder()
+
+					serveIndex(ds, fs)(w, r)
+
+					config := extractAppConfig(w.Body.String())
+					Expect(config).To(HaveKeyWithValue("loginBackgroundURL", consts.DefaultUILoginBackgroundURLOffline))
+				})
+			})
+			When("it is a custom URL", func() {
+				It("points to the offline URL", func() {
+					conf.Server.UILoginBackgroundURL = "https://example.com/images/1.jpg"
+					r := httptest.NewRequest("GET", "/index.html", nil)
+					w := httptest.NewRecorder()
+
+					serveIndex(ds, fs)(w, r)
+
+					config := extractAppConfig(w.Body.String())
+					Expect(config).To(HaveKeyWithValue("loginBackgroundURL", "https://example.com/images/1.jpg"))
+				})
+			})
+		})
+		Context("with a BaseURL", func() {
+			BeforeEach(func() {
+				conf.Server.BaseURL = "/music"
+			})
+			When("it is the default URL", func() {
+				It("points to the default URL with BaseURL prefix", func() {
+					conf.Server.UILoginBackgroundURL = consts.DefaultUILoginBackgroundURL
+					r := httptest.NewRequest("GET", "/index.html", nil)
+					w := httptest.NewRecorder()
+
+					serveIndex(ds, fs)(w, r)
+
+					config := extractAppConfig(w.Body.String())
+					Expect(config).To(HaveKeyWithValue("loginBackgroundURL", "/music"+consts.DefaultUILoginBackgroundURL))
+				})
+			})
+			When("it is the default offline URL", func() {
+				It("points to the offline URL", func() {
+					conf.Server.UILoginBackgroundURL = consts.DefaultUILoginBackgroundURLOffline
+					r := httptest.NewRequest("GET", "/index.html", nil)
+					w := httptest.NewRecorder()
+
+					serveIndex(ds, fs)(w, r)
+
+					config := extractAppConfig(w.Body.String())
+					Expect(config).To(HaveKeyWithValue("loginBackgroundURL", consts.DefaultUILoginBackgroundURLOffline))
+				})
+			})
+			When("it is a custom URL", func() {
+				It("points to the offline URL", func() {
+					conf.Server.UILoginBackgroundURL = "https://example.com/images/1.jpg"
+					r := httptest.NewRequest("GET", "/index.html", nil)
+					w := httptest.NewRecorder()
+
+					serveIndex(ds, fs)(w, r)
+
+					config := extractAppConfig(w.Body.String())
+					Expect(config).To(HaveKeyWithValue("loginBackgroundURL", "https://example.com/images/1.jpg"))
+				})
+			})
+		})
+	})
 })
 
 var appConfigRegex = regexp.MustCompile(`(?m)window.__APP_CONFIG__=(.*);</script>`)
