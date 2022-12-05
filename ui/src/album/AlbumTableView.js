@@ -20,6 +20,7 @@ import {
   useSelectedFields,
 } from '../common'
 import config from '../config'
+import { Datagrid as InfiniteDatagrid } from '../infiniteScroll'
 import { DraggableTypes } from '../consts'
 
 const useStyles = makeStyles({
@@ -66,9 +67,12 @@ const AlbumDatagridBody = (props) => (
   <DatagridBody {...props} row={<AlbumDatagridRow />} />
 )
 
-const AlbumDatagrid = (props) => (
-  <Datagrid {...props} body={<AlbumDatagridBody />} />
-)
+const AlbumDatagrid = (props) =>
+  config.devEnableInfiniteScroll ? (
+    <InfiniteDatagrid {...props} />
+  ) : (
+    <Datagrid {...props} body={<AlbumDatagridBody />} />
+  )
 
 const AlbumTableView = ({
   hasShow,
@@ -91,7 +95,12 @@ const AlbumTableView = ({
         <NumberField source="playCount" sortByOrder={'DESC'} />
       ),
       year: (
-        <RangeField source={'year'} sortBy={'max_year'} sortByOrder={'DESC'} />
+        <RangeField
+          source={'year'}
+          sortBy={'max_year'}
+          sortByOrder={'DESC'}
+          dataKey={'max_year'}
+        />
       ),
       duration: isDesktop && <DurationField source="duration" />,
       rating: config.enableStarRating && (
@@ -132,7 +141,12 @@ const AlbumTableView = ({
       )}
       tertiaryText={(r) => (
         <>
-          <RangeField record={r} source={'year'} sortBy={'max_year'} />
+          <RangeField
+            record={r}
+            source={'year'}
+            sortBy={'max_year'}
+            dataKey={'max_year'}
+          />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </>
       )}
@@ -142,7 +156,7 @@ const AlbumTableView = ({
     />
   ) : (
     <AlbumDatagrid rowClick={'show'} classes={{ row: classes.row }} {...rest}>
-      <TextField source="name" />
+      <TextField source="name" flexgrow={0.75} width={200} />
       {columns}
       <AlbumContextMenu
         source={'starred'}

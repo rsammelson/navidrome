@@ -19,6 +19,8 @@ import {
   ArtistLinkField,
   RangeField,
 } from '../common'
+import AlbumDatagrid from '../infiniteScroll/AlbumDatagrid'
+import config from '../config'
 import { DraggableTypes } from '../consts'
 
 const useStyles = makeStyles(
@@ -26,6 +28,7 @@ const useStyles = makeStyles(
     root: {
       margin: '20px',
       display: 'grid',
+      height: config.devEnableInfiniteScroll ? 'calc(100% - 25px)' : 'initial',
     },
     tileBar: {
       transition: 'all 150ms ease-out',
@@ -99,10 +102,27 @@ const getColsForWidth = (width) => {
 }
 
 const Cover = withContentRect('bounds')(
-  ({ record, measureRef, contentRect }) => {
+  ({ record, isLoaded, measureRef, contentRect }) => {
     // Force height to be the same as the width determined by the GridList
     // noinspection JSSuspiciousNameCombination
     const classes = useCoverStyles({ height: contentRect.bounds.width })
+    if (config.devEnableInfiniteScroll) {
+      if (isLoaded)
+        return (
+          <img
+            src={subsonic.getCoverArtUrl(record, 300)}
+            alt={record.name}
+            className={classes.cover}
+          />
+        )
+      return (
+        <div
+          className={classes.cover}
+          style={{ backgroundColor: '#222', borderRadius: 4 }}
+        ></div>
+      )
+    }
+
     const [, dragAlbumRef] = useDrag(
       () => ({
         type: DraggableTypes.ALBUM,
@@ -112,26 +132,58 @@ const Cover = withContentRect('bounds')(
       [record]
     )
     return (
-      <div ref={measureRef}>
-        <div ref={dragAlbumRef}>
-          <img
-            src={subsonic.getCoverArtUrl(record, 300)}
-            alt={record.name}
-            className={classes.cover}
-          />
-        </div>
+      <div ref={dragAlbumRef}>
+        <img
+          src={subsonic.getCoverArtUrl(record, 300)}
+          alt={record.name}
+          className={classes.cover}
+        />
       </div>
     )
   }
 )
 
-const AlbumGridTile = ({ showArtist, record, basePath, ...props }) => {
+const AlbumGridTile = ({
+  showArtist,
+  record,
+  basePath,
+  isLoaded,
+  ...props
+}) => {
   const classes = useStyles()
   const isDesktop = useMediaQuery((theme) => theme.breakpoints.up('md'), {
     noSsr: true,
   })
-  if (!record) {
-    return null
+
+  if (!config.devEnableInfiniteScroll && !record) return null
+
+  if (config.devEnableInfiniteScroll && (!record || !isLoaded)) {
+    return (
+      <div className={classes.albumContainer}>
+        <Cover album={record} isLoaded={false} />
+        <div
+          className={classes.albumName}
+          style={{
+            color: 'rgba(0,0,0,0)',
+            backgroundColor: '#222',
+            borderRadius: 4,
+          }}
+        >
+          Album Name
+        </div>
+        <div
+          className={classes.albumSubtitle}
+          style={{
+            color: 'rgba(0,0,0,0)',
+            backgroundColor: '#222',
+            borderRadius: 4,
+            marginTop: 10,
+          }}
+        >
+          Album Subtitle
+        </div>
+      </div>
+    )
   }
   return (
     <div className={classes.albumContainer}>
@@ -139,7 +191,7 @@ const AlbumGridTile = ({ showArtist, record, basePath, ...props }) => {
         className={classes.link}
         to={linkToRecord(basePath, record.id, 'show')}
       >
-        <Cover record={record} />
+        <Cover record={record} isLoaded={true} />
         <GridListTileBar
           className={isDesktop ? classes.tileBar : classes.tileBarMobile}
           subtitle={
@@ -167,42 +219,78 @@ const AlbumGridTile = ({ showArtist, record, basePath, ...props }) => {
           sortBy={'max_year'}
           sortByOrder={'DESC'}
           className={classes.albumSubtitle}
+          dataKey={'maxYear'}
         />
       )}
     </div>
   )
 }
 
-const LoadedAlbumGrid = ({ ids, data, basePath, width }) => {
-  const classes = useStyles()
-  const { filterValues } = useListContext()
-  const isArtistView = !!(filterValues && filterValues.artist_id)
-  return (
-    <div className={classes.root}>
-      <GridList
-        component={'div'}
-        cellHeight={'auto'}
-        cols={getColsForWidth(width)}
-        spacing={20}
-      >
-        {ids.map((id) => (
-          <GridListTile className={classes.gridListTile} key={id}>
-            <AlbumGridTile
-              record={data[id]}
-              basePath={basePath}
-              showArtist={!isArtistView}
-            />
-          </GridListTile>
-        ))}
-      </GridList>
-    </div>
-  )
-}
+const AlbumGridView = withContentRect('bounds')(
+  ({
+    albumListType,
+    loaded,
+    loading,
+    basePath,
+    width,
+    measureRef,
+    contentRect,
+    ...props
+  }) => {
+    const classes = useStyles()
+    const { filterValues } = useListContext()
+    const isArtistView = !!(filterValues && filterValues.artist_id)
+    const hide =
+      (loading && albumListType === 'random') || !props.data || !props.ids
+    const columns = getColsForWidth(width)
 
-const AlbumGridView = ({ albumListType, loaded, loading, ...props }) => {
-  const hide =
-    (loading && albumListType === 'random') || !props.data || !props.ids
-  return hide ? <Loading /> : <LoadedAlbumGrid {...props} />
-}
+    const tileImageHeight = contentRect.bounds.width / columns
+    const tileTextHeight = 40
+
+    return hide ? (
+      <Loading />
+    ) : (
+      <div ref={measureRef} className={classes.root}>
+        {config.devEnableInfiniteScroll ? (
+          <AlbumDatagrid
+            columns={columns}
+            itemHeight={tileImageHeight + tileTextHeight || 300}
+          >
+            {({ isLoaded, record, itemIndex }) => (
+              <GridListTile
+                className={classes.gridListTile}
+                key={!!record ? record.id : itemIndex}
+              >
+                <AlbumGridTile
+                  record={record}
+                  basePath={basePath}
+                  showArtist={!isArtistView}
+                  isLoaded={isLoaded}
+                />
+              </GridListTile>
+            )}
+          </AlbumDatagrid>
+        ) : (
+          <GridList
+            component={'div'}
+            cellHeight={'auto'}
+            cols={columns}
+            spacing={20}
+          >
+            {props.ids.map((id) => (
+              <GridListTile className={classes.gridListTile} key={id}>
+                <AlbumGridTile
+                  record={props.data[id]}
+                  basePath={basePath}
+                  showArtist={!isArtistView}
+                />
+              </GridListTile>
+            ))}
+          </GridList>
+        )}
+      </div>
+    )
+  }
+)
 
 export default withWidth()(AlbumGridView)

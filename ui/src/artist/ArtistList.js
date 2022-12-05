@@ -20,7 +20,6 @@ import { useDrag } from 'react-dnd'
 import { AddToPlaylistDialog } from '../dialogs'
 import {
   ArtistContextMenu,
-  List,
   QuickFilter,
   useGetHandleArtistClick,
   ArtistSimpleList,
@@ -30,6 +29,7 @@ import {
 } from '../common'
 import config from '../config'
 import ArtistListActions from './ArtistListActions'
+import { List, Datagrid as InfiniteDatagrid } from '../infiniteScroll'
 import { DraggableTypes } from '../consts'
 import DownloadMenuDialog from '../dialogs/DownloadMenuDialog'
 
@@ -100,9 +100,12 @@ const ArtistDatagridBody = (props) => (
   <DatagridBody {...props} row={<ArtistDatagridRow />} />
 )
 
-const ArtistDatagrid = (props) => (
-  <Datagrid {...props} body={<ArtistDatagridBody />} />
-)
+const ArtistDatagrid = (props) =>
+  config.devEnableInfiniteScroll ? (
+    <InfiniteDatagrid {...props} />
+  ) : (
+    <Datagrid {...props} body={<ArtistDatagridBody />} />
+  )
 
 const ArtistListView = ({ hasShow, hasEdit, hasList, width, ...rest }) => {
   const classes = useStyles()

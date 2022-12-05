@@ -52,6 +52,7 @@ func serveIndex(ds model.DataStore, fs fs.FS) http.HandlerFunc {
 			"devSidebarPlaylists":     conf.Server.DevSidebarPlaylists,
 			"lastFMEnabled":           conf.Server.LastFM.Enabled,
 			"lastFMApiKey":            conf.Server.LastFM.ApiKey,
+			"devEnableInfiniteScroll": conf.Server.DevEnableInfiniteScroll,
 			"devShowArtistPage":       conf.Server.DevShowArtistPage,
 			"listenBrainzEnabled":     conf.Server.ListenBrainz.Enabled,
 			"enableReplayGain":        conf.Server.EnableReplayGain,
