@@ -84,6 +84,7 @@ type configOptions struct {
 	DevEnableShare             bool
 	DevSidebarPlaylists        bool
 	DevEnableBufferedScrobble  bool
+	DevEnableInfiniteScroll    bool
 	DevShowArtistPage          bool
 }
 

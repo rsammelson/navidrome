@@ -267,6 +267,17 @@ var _ = Describe("serveIndex", func() {
 		Expect(config).To(HaveKeyWithValue("lastFMApiKey", "APIKEY-123"))
 	})
 
+	It("sets the devEnableInfiniteScroll", func() {
+		conf.Server.DevEnableInfiniteScroll = true
+		r := httptest.NewRequest("GET", "/index.html", nil)
+		w := httptest.NewRecorder()
+
+		serveIndex(ds, fs)(w, r)
+
+		config := extractAppConfig(w.Body.String())
+		Expect(config).To(HaveKeyWithValue("devEnableInfiniteScroll", true))
+	})
+
 	It("sets the devShowArtistPage", func() {
 		conf.Server.DevShowArtistPage = true
 		r := httptest.NewRequest("GET", "/index.html", nil)

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import {
-  Datagrid,
   DateField,
   EditButton,
   Filter,
@@ -19,7 +18,6 @@ import Switch from '@material-ui/core/Switch'
 import { useMediaQuery } from '@material-ui/core'
 import {
   DurationField,
-  List,
   Writable,
   isWritable,
   useSelectedFields,
@@ -27,6 +25,7 @@ import {
 } from '../common'
 import PlaylistListActions from './PlaylistListActions'
 import ChangePublicStatusButton from './ChangePublicStatusButton'
+import { List, Datagrid } from '../infiniteScroll'
 
 const PlaylistFilter = (props) => {
   const { permissions } = usePermissions()

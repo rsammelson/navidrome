@@ -14,7 +14,6 @@ import {
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import { withWidth } from '@material-ui/core'
 import {
-  List,
   QuickFilter,
   Title,
   useAlbumsPerPage,
@@ -30,6 +29,7 @@ import config from '../config'
 import AlbumInfo from './AlbumInfo'
 import DownloadMenuDialog from '../dialogs/DownloadMenuDialog'
 import ExpandInfoDialog from '../dialogs/ExpandInfoDialog'
+import { List } from '../infiniteScroll'
 
 const AlbumFilter = (props) => {
   const translate = useTranslate()
@@ -123,8 +123,12 @@ const AlbumList = (props) => {
         actions={<AlbumListActions />}
         filters={<AlbumFilter />}
         perPage={perPage}
-        pagination={<Pagination rowsPerPageOptions={perPageOptions} />}
         title={<AlbumListTitle albumListType={albumListType} />}
+        pagination={
+          !config.devEnableInfiniteScroll ? (
+            <Pagination rowsPerPageOptions={perPageOptions} />
+          ) : null
+        }
       >
         {albumView.grid ? (
           <AlbumGridView albumListType={albumListType} {...props} />
