@@ -47,7 +47,7 @@ export const DOWNLOAD_MENU_ARTIST = 'artist'
 export const DOWNLOAD_MENU_PLAY = 'playlist'
 export const DOWNLOAD_MENU_SONG = 'song'
 
-export const downloadMeuDialogReducer = (
+export const downloadMenuDialogReducer = (
   previousState = {
     open: false,
   },
