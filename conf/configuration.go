@@ -55,17 +55,19 @@ type configOptions struct {
 	DefaultTheme                 string
 	DefaultLanguage              string
 	DefaultUIVolume              int
-	EnableReplayGain             bool
-	EnableCoverAnimation         bool
-	GATrackingID                 string
-	EnableLogRedacting           bool
-	AuthRequestLimit             int
-	AuthWindowLength             time.Duration
-	PasswordEncryptionKey        string
-	ReverseProxyUserHeader       string
-	ReverseProxyWhitelist        string
-	Prometheus                   prometheusOptions
-	Scanner                      scannerOptions
+	EnableDuplicateSearch        bool
+
+	EnableReplayGain       bool
+	EnableCoverAnimation   bool
+	GATrackingID           string
+	EnableLogRedacting     bool
+	AuthRequestLimit       int
+	AuthWindowLength       time.Duration
+	PasswordEncryptionKey  string
+	ReverseProxyUserHeader string
+	ReverseProxyWhitelist  string
+	Prometheus             prometheusOptions
+	Scanner                scannerOptions
 
 	Agents       string
 	LastFM       lastfmOptions
@@ -231,6 +233,9 @@ func init() {
 	viper.SetDefault("playlistspath", consts.DefaultPlaylistsPath)
 	viper.SetDefault("enabledownloads", true)
 	viper.SetDefault("enableexternalservices", true)
+
+	// Config options only valid for file/env configuration
+	viper.SetDefault("enableduplicatesearch", false)
 	viper.SetDefault("enableMediaFileCoverArt", true)
 	viper.SetDefault("autotranscodedownload", false)
 	viper.SetDefault("defaultdownsamplingformat", consts.DefaultDownsamplingFormat)
